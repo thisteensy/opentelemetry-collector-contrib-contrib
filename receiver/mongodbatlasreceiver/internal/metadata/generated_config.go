@@ -3,6 +3,9 @@
 package metadata
 
 import (
+	"fmt"
+	"slices"
+
 	"go.opentelemetry.io/collector/confmap"
 	"go.opentelemetry.io/collector/filter"
 )
@@ -11,6 +14,11 @@ import (
 type MetricConfig struct {
 	Enabled          bool `mapstructure:"enabled"`
 	enabledSetByUser bool
+
+	AggregationStrategy string   `mapstructure:"aggregation_strategy"`
+	EnabledAttributes   []string `mapstructure:"attributes"`
+	definedAttributes   []string
+	requiredAttributes  []string
 }
 
 func (ms *MetricConfig) Unmarshal(parser *confmap.Conf) error {
@@ -22,9 +30,32 @@ func (ms *MetricConfig) Unmarshal(parser *confmap.Conf) error {
 	if err != nil {
 		return err
 	}
+	for _, val := range ms.EnabledAttributes {
+		if !slices.Contains(ms.definedAttributes, val) {
+			return fmt.Errorf("%v is not defined in metadata.yaml", val)
+		}
+	}
+
+	for _, val := range ms.requiredAttributes {
+		if !slices.Contains(ms.EnabledAttributes, val) {
+			return fmt.Errorf("`attributes` field must contain required attribute: %v", val)
+		}
+	}
+
+	if ms.AggregationStrategy != AggregationStrategySum &&
+		ms.AggregationStrategy != AggregationStrategyAvg &&
+		ms.AggregationStrategy != AggregationStrategyMin &&
+		ms.AggregationStrategy != AggregationStrategyMax {
+		return fmt.Errorf("invalid aggregation strategy set: '%v'", ms.AggregationStrategy)
+	}
 
 	ms.enabledSetByUser = parser.IsSet("enabled")
 	return nil
+}
+
+// AttributeConfig holds configuration information for a particular metric.
+type AttributeConfig struct {
+	Enabled bool `mapstructure:"enabled"`
 }
 
 // MetricsConfig provides config for mongodb_atlas metrics.
@@ -100,198 +131,523 @@ func DefaultMetricsConfig() MetricsConfig {
 	return MetricsConfig{
 		MongodbatlasDbCounts: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"object_type"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDbSize: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"object_type"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionIopsAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_direction"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionIopsMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_direction"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionLatencyAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_direction"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionLatencyMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_direction"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionQueueDepth: MetricConfig{
 			Enabled: false,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionSpaceAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_status"},
+			EnabledAttributes:   []string{"disk_status"},
 		},
 		MongodbatlasDiskPartitionSpaceMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_status"},
+			EnabledAttributes:   []string{"disk_status"},
 		},
 		MongodbatlasDiskPartitionThroughput: MetricConfig{
 			Enabled: false,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_direction"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_status"},
+			EnabledAttributes:   []string{"disk_status"},
 		},
 		MongodbatlasDiskPartitionUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"disk_status"},
+			EnabledAttributes:   []string{"disk_status"},
 		},
 		MongodbatlasDiskPartitionUtilizationAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasDiskPartitionUtilizationMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessAsserts: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"assert_type"},
+			EnabledAttributes:   []string{"assert_type"},
 		},
 		MongodbatlasProcessBackgroundFlush: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessCacheIo: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cache_direction"},
+			EnabledAttributes:   []string{"cache_direction"},
 		},
 		MongodbatlasProcessCacheRatio: MetricConfig{
 			Enabled: false,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cache_ratio_type"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessCacheSize: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategySum,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cache_status"},
+			EnabledAttributes:   []string{"cache_status"},
 		},
 		MongodbatlasProcessConnections: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategySum,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessCPUChildrenNormalizedUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCPUChildrenNormalizedUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCPUChildrenUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCPUChildrenUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCPUNormalizedUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCPUNormalizedUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCPUUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCPUUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasProcessCursors: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cursor_state"},
+			EnabledAttributes:   []string{"cursor_state"},
 		},
 		MongodbatlasProcessDbDocumentRate: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"document_status"},
+			EnabledAttributes:   []string{"document_status"},
 		},
 		MongodbatlasProcessDbOperationsRate: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"operation", "cluster_role"},
+			EnabledAttributes:   []string{"operation", "cluster_role"},
 		},
 		MongodbatlasProcessDbOperationsTime: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategySum,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"execution_type"},
+			EnabledAttributes:   []string{"execution_type"},
 		},
 		MongodbatlasProcessDbQueryExecutorScanned: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"scanned_type"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessDbQueryTargetingScannedPerReturned: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"scanned_type"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessDbStorage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"storage_status"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessGlobalLock: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"global_lock_state"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessIndexBtreeMissRatio: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessIndexCounters: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"btree_counter_type"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessJournalingCommits: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessJournalingDataFiles: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessJournalingWritten: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessMemoryUsage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"memory_state"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessNetworkIo: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"direction"},
+			EnabledAttributes:   []string{"direction"},
 		},
 		MongodbatlasProcessNetworkRequests: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategySum,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessOplogRate: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessOplogTime: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"oplog_type"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessPageFaults: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"memory_issue_type"},
+			EnabledAttributes:   []string{"memory_issue_type"},
 		},
 		MongodbatlasProcessRestarts: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasProcessTickets: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"ticket_type"},
+			EnabledAttributes:   []string{"ticket_type"},
 		},
 		MongodbatlasSystemCPUNormalizedUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasSystemCPUNormalizedUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasSystemCPUUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasSystemCPUUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasSystemFtsCPUNormalizedUsage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasSystemFtsCPUUsage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"cpu_state"},
+			EnabledAttributes:   []string{"cpu_state"},
 		},
 		MongodbatlasSystemFtsDiskUsed: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasSystemFtsMemoryUsage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategySum,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"memory_state"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasSystemMemoryUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"memory_status"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasSystemMemoryUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"memory_status"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasSystemNetworkIoAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"direction"},
+			EnabledAttributes:   []string{"direction"},
 		},
 		MongodbatlasSystemNetworkIoMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"direction"},
+			EnabledAttributes:   []string{"direction"},
 		},
 		MongodbatlasSystemPagingIoAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"direction"},
+			EnabledAttributes:   []string{"direction"},
 		},
 		MongodbatlasSystemPagingIoMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"direction"},
+			EnabledAttributes:   []string{"direction"},
 		},
 		MongodbatlasSystemPagingUsageAverage: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"memory_state"},
+			EnabledAttributes:   []string{},
 		},
 		MongodbatlasSystemPagingUsageMax: MetricConfig{
 			Enabled: true,
+
+			AggregationStrategy: AggregationStrategyAvg,
+			requiredAttributes:  []string{},
+			definedAttributes:   []string{"memory_state"},
+			EnabledAttributes:   []string{},
 		},
 	}
 }
