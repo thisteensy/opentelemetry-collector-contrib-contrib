@@ -56,11 +56,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"disk_direction"},
 					},
-					MongodbatlasDiskPartitionQueueDepth: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasDiskPartitionQueueDepth: MetricConfig{Enabled: true},
 					MongodbatlasDiskPartitionSpaceAverage: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -86,26 +82,14 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"disk_status"},
 					},
-					MongodbatlasDiskPartitionUtilizationAverage: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasDiskPartitionUtilizationMax: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasDiskPartitionUtilizationAverage: MetricConfig{Enabled: true},
+					MongodbatlasDiskPartitionUtilizationMax:     MetricConfig{Enabled: true},
 					MongodbatlasProcessAsserts: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"assert_type"},
 					},
-					MongodbatlasProcessBackgroundFlush: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessBackgroundFlush: MetricConfig{Enabled: true},
 					MongodbatlasProcessCacheIo: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -121,11 +105,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategySum,
 						EnabledAttributes:   []string{"cache_status"},
 					},
-					MongodbatlasProcessConnections: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategySum,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessConnections: MetricConfig{Enabled: true},
 					MongodbatlasProcessCPUChildrenNormalizedUsageAverage: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -206,31 +186,15 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"global_lock_state"},
 					},
-					MongodbatlasProcessIndexBtreeMissRatio: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessIndexBtreeMissRatio: MetricConfig{Enabled: true},
 					MongodbatlasProcessIndexCounters: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"btree_counter_type"},
 					},
-					MongodbatlasProcessJournalingCommits: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasProcessJournalingDataFiles: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasProcessJournalingWritten: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessJournalingCommits:   MetricConfig{Enabled: true},
+					MongodbatlasProcessJournalingDataFiles: MetricConfig{Enabled: true},
+					MongodbatlasProcessJournalingWritten:   MetricConfig{Enabled: true},
 					MongodbatlasProcessMemoryUsage: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -241,16 +205,8 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"direction"},
 					},
-					MongodbatlasProcessNetworkRequests: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategySum,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasProcessOplogRate: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessNetworkRequests: MetricConfig{Enabled: true},
+					MongodbatlasProcessOplogRate:       MetricConfig{Enabled: true},
 					MongodbatlasProcessOplogTime: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -261,11 +217,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"memory_issue_type"},
 					},
-					MongodbatlasProcessRestarts: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessRestarts: MetricConfig{Enabled: true},
 					MongodbatlasProcessTickets: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -301,11 +253,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"cpu_state"},
 					},
-					MongodbatlasSystemFtsDiskUsed: MetricConfig{
-						Enabled:             true,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasSystemFtsDiskUsed: MetricConfig{Enabled: true},
 					MongodbatlasSystemFtsMemoryUsage: MetricConfig{
 						Enabled:             true,
 						AggregationStrategy: AggregationStrategySum,
@@ -403,11 +351,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"disk_direction"},
 					},
-					MongodbatlasDiskPartitionQueueDepth: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasDiskPartitionQueueDepth: MetricConfig{Enabled: false},
 					MongodbatlasDiskPartitionSpaceAverage: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -433,26 +377,14 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"disk_status"},
 					},
-					MongodbatlasDiskPartitionUtilizationAverage: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasDiskPartitionUtilizationMax: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasDiskPartitionUtilizationAverage: MetricConfig{Enabled: false},
+					MongodbatlasDiskPartitionUtilizationMax:     MetricConfig{Enabled: false},
 					MongodbatlasProcessAsserts: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"assert_type"},
 					},
-					MongodbatlasProcessBackgroundFlush: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessBackgroundFlush: MetricConfig{Enabled: false},
 					MongodbatlasProcessCacheIo: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -468,11 +400,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategySum,
 						EnabledAttributes:   []string{"cache_status"},
 					},
-					MongodbatlasProcessConnections: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategySum,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessConnections: MetricConfig{Enabled: false},
 					MongodbatlasProcessCPUChildrenNormalizedUsageAverage: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -553,31 +481,15 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"global_lock_state"},
 					},
-					MongodbatlasProcessIndexBtreeMissRatio: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessIndexBtreeMissRatio: MetricConfig{Enabled: false},
 					MongodbatlasProcessIndexCounters: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"btree_counter_type"},
 					},
-					MongodbatlasProcessJournalingCommits: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasProcessJournalingDataFiles: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasProcessJournalingWritten: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessJournalingCommits:   MetricConfig{Enabled: false},
+					MongodbatlasProcessJournalingDataFiles: MetricConfig{Enabled: false},
+					MongodbatlasProcessJournalingWritten:   MetricConfig{Enabled: false},
 					MongodbatlasProcessMemoryUsage: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -588,16 +500,8 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"direction"},
 					},
-					MongodbatlasProcessNetworkRequests: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategySum,
-						EnabledAttributes:   []string{},
-					},
-					MongodbatlasProcessOplogRate: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessNetworkRequests: MetricConfig{Enabled: false},
+					MongodbatlasProcessOplogRate:       MetricConfig{Enabled: false},
 					MongodbatlasProcessOplogTime: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -608,11 +512,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"memory_issue_type"},
 					},
-					MongodbatlasProcessRestarts: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasProcessRestarts: MetricConfig{Enabled: false},
 					MongodbatlasProcessTickets: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategyAvg,
@@ -648,11 +548,7 @@ func TestMetricsBuilderConfig(t *testing.T) {
 						AggregationStrategy: AggregationStrategyAvg,
 						EnabledAttributes:   []string{"cpu_state"},
 					},
-					MongodbatlasSystemFtsDiskUsed: MetricConfig{
-						Enabled:             false,
-						AggregationStrategy: AggregationStrategyAvg,
-						EnabledAttributes:   []string{},
-					},
+					MongodbatlasSystemFtsDiskUsed: MetricConfig{Enabled: false},
 					MongodbatlasSystemFtsMemoryUsage: MetricConfig{
 						Enabled:             false,
 						AggregationStrategy: AggregationStrategySum,

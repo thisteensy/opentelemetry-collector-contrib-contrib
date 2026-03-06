@@ -21,7 +21,6 @@ all_set:
       attributes: ["disk_direction"]
     mongodbatlas.disk.partition.queue.depth:
       enabled: true
-      attributes: []
     mongodbatlas.disk.partition.space.average:
       enabled: true
       attributes: ["disk_status"]
@@ -39,16 +38,13 @@ all_set:
       attributes: ["disk_status"]
     mongodbatlas.disk.partition.utilization.average:
       enabled: true
-      attributes: []
     mongodbatlas.disk.partition.utilization.max:
       enabled: true
-      attributes: []
     mongodbatlas.process.asserts:
       enabled: true
       attributes: ["assert_type"]
     mongodbatlas.process.background_flush:
       enabled: true
-      attributes: []
     mongodbatlas.process.cache.io:
       enabled: true
       attributes: ["cache_direction"]
@@ -60,7 +56,6 @@ all_set:
       attributes: ["cache_status"]
     mongodbatlas.process.connections:
       enabled: true
-      attributes: []
     mongodbatlas.process.cpu.children.normalized.usage.average:
       enabled: true
       attributes: ["cpu_state"]
@@ -111,19 +106,15 @@ all_set:
       attributes: ["global_lock_state"]
     mongodbatlas.process.index.btree_miss_ratio:
       enabled: true
-      attributes: []
     mongodbatlas.process.index.counters:
       enabled: true
       attributes: ["btree_counter_type"]
     mongodbatlas.process.journaling.commits:
       enabled: true
-      attributes: []
     mongodbatlas.process.journaling.data_files:
       enabled: true
-      attributes: []
     mongodbatlas.process.journaling.written:
       enabled: true
-      attributes: []
     mongodbatlas.process.memory.usage:
       enabled: true
       attributes: ["memory_state"]
@@ -132,10 +123,8 @@ all_set:
       attributes: ["direction"]
     mongodbatlas.process.network.requests:
       enabled: true
-      attributes: []
     mongodbatlas.process.oplog.rate:
       enabled: true
-      attributes: []
     mongodbatlas.process.oplog.time:
       enabled: true
       attributes: ["oplog_type"]
@@ -144,7 +133,6 @@ all_set:
       attributes: ["memory_issue_type"]
     mongodbatlas.process.restarts:
       enabled: true
-      attributes: []
     mongodbatlas.process.tickets:
       enabled: true
       attributes: ["ticket_type"]
@@ -168,7 +156,6 @@ all_set:
       attributes: ["cpu_state"]
     mongodbatlas.system.fts.disk.used:
       enabled: true
-      attributes: []
     mongodbatlas.system.fts.memory.usage:
       enabled: true
       attributes: ["memory_state"]
@@ -245,7 +232,6 @@ reaggregate_set:
       attributes: []
     mongodbatlas.disk.partition.queue.depth:
       enabled: true
-      attributes: []
     mongodbatlas.disk.partition.space.average:
       enabled: true
       attributes: []
@@ -263,16 +249,13 @@ reaggregate_set:
       attributes: []
     mongodbatlas.disk.partition.utilization.average:
       enabled: true
-      attributes: []
     mongodbatlas.disk.partition.utilization.max:
       enabled: true
-      attributes: []
     mongodbatlas.process.asserts:
       enabled: true
       attributes: []
     mongodbatlas.process.background_flush:
       enabled: true
-      attributes: []
     mongodbatlas.process.cache.io:
       enabled: true
       attributes: []
@@ -284,7 +267,6 @@ reaggregate_set:
       attributes: []
     mongodbatlas.process.connections:
       enabled: true
-      attributes: []
     mongodbatlas.process.cpu.children.normalized.usage.average:
       enabled: true
       attributes: []
@@ -335,19 +317,15 @@ reaggregate_set:
       attributes: []
     mongodbatlas.process.index.btree_miss_ratio:
       enabled: true
-      attributes: []
     mongodbatlas.process.index.counters:
       enabled: true
       attributes: []
     mongodbatlas.process.journaling.commits:
       enabled: true
-      attributes: []
     mongodbatlas.process.journaling.data_files:
       enabled: true
-      attributes: []
     mongodbatlas.process.journaling.written:
       enabled: true
-      attributes: []
     mongodbatlas.process.memory.usage:
       enabled: true
       attributes: []
@@ -356,10 +334,8 @@ reaggregate_set:
       attributes: []
     mongodbatlas.process.network.requests:
       enabled: true
-      attributes: []
     mongodbatlas.process.oplog.rate:
       enabled: true
-      attributes: []
     mongodbatlas.process.oplog.time:
       enabled: true
       attributes: []
@@ -368,7 +344,6 @@ reaggregate_set:
       attributes: []
     mongodbatlas.process.restarts:
       enabled: true
-      attributes: []
     mongodbatlas.process.tickets:
       enabled: true
       attributes: []
@@ -392,7 +367,6 @@ reaggregate_set:
       attributes: []
     mongodbatlas.system.fts.disk.used:
       enabled: true
-      attributes: []
     mongodbatlas.system.fts.memory.usage:
       enabled: true
       attributes: []
@@ -469,7 +443,6 @@ none_set:
       attributes: ["disk_direction"]
     mongodbatlas.disk.partition.queue.depth:
       enabled: false
-      attributes: []
     mongodbatlas.disk.partition.space.average:
       enabled: false
       attributes: ["disk_status"]
@@ -487,16 +460,13 @@ none_set:
       attributes: ["disk_status"]
     mongodbatlas.disk.partition.utilization.average:
       enabled: false
-      attributes: []
     mongodbatlas.disk.partition.utilization.max:
       enabled: false
-      attributes: []
     mongodbatlas.process.asserts:
       enabled: false
       attributes: ["assert_type"]
     mongodbatlas.process.background_flush:
       enabled: false
-      attributes: []
     mongodbatlas.process.cache.io:
       enabled: false
       attributes: ["cache_direction"]
@@ -508,7 +478,6 @@ none_set:
       attributes: ["cache_status"]
     mongodbatlas.process.connections:
       enabled: false
-      attributes: []
     mongodbatlas.process.cpu.children.normalized.usage.average:
       enabled: false
       attributes: ["cpu_state"]
@@ -559,19 +528,15 @@ none_set:
       attributes: ["global_lock_state"]
     mongodbatlas.process.index.btree_miss_ratio:
       enabled: false
-      attributes: []
     mongodbatlas.process.index.counters:
       enabled: false
       attributes: ["btree_counter_type"]
     mongodbatlas.process.journaling.commits:
       enabled: false
-      attributes: []
     mongodbatlas.process.journaling.data_files:
       enabled: false
-      attributes: []
     mongodbatlas.process.journaling.written:
       enabled: false
-      attributes: []
     mongodbatlas.process.memory.usage:
       enabled: false
       attributes: ["memory_state"]
@@ -580,10 +545,8 @@ none_set:
       attributes: ["direction"]
     mongodbatlas.process.network.requests:
       enabled: false
-      attributes: []
     mongodbatlas.process.oplog.rate:
       enabled: false
-      attributes: []
     mongodbatlas.process.oplog.time:
       enabled: false
       attributes: ["oplog_type"]
@@ -592,7 +555,6 @@ none_set:
       attributes: ["memory_issue_type"]
     mongodbatlas.process.restarts:
       enabled: false
-      attributes: []
     mongodbatlas.process.tickets:
       enabled: false
       attributes: ["ticket_type"]
@@ -616,7 +578,6 @@ none_set:
       attributes: ["cpu_state"]
     mongodbatlas.system.fts.disk.used:
       enabled: false
-      attributes: []
     mongodbatlas.system.fts.memory.usage:
       enabled: false
       attributes: ["memory_state"]
