@@ -52,9 +52,17 @@ func TestMetricsBuilderConfig(t *testing.T) {
 					FlinkJvmThreadsCount:              MetricConfig{Enabled: true},
 					FlinkMemoryManagedTotal:           MetricConfig{Enabled: true},
 					FlinkMemoryManagedUsed:            MetricConfig{Enabled: true},
-					FlinkOperatorRecordCount:          MetricConfig{Enabled: true},
-					FlinkOperatorWatermarkOutput:      MetricConfig{Enabled: true},
-					FlinkTaskRecordCount:              MetricConfig{Enabled: true},
+					FlinkOperatorRecordCount: MetricConfig{
+						Enabled:             true,
+						AggregationStrategy: AggregationStrategySum,
+						EnabledAttributes:   []string{"name", "record"},
+					},
+					FlinkOperatorWatermarkOutput: MetricConfig{
+						Enabled:             true,
+						AggregationStrategy: AggregationStrategySum,
+						EnabledAttributes:   []string{"name"},
+					},
+					FlinkTaskRecordCount: MetricConfig{Enabled: true},
 				},
 				ResourceAttributes: ResourceAttributesConfig{
 					FlinkJobName:       ResourceAttributeConfig{Enabled: true},
@@ -96,9 +104,17 @@ func TestMetricsBuilderConfig(t *testing.T) {
 					FlinkJvmThreadsCount:              MetricConfig{Enabled: false},
 					FlinkMemoryManagedTotal:           MetricConfig{Enabled: false},
 					FlinkMemoryManagedUsed:            MetricConfig{Enabled: false},
-					FlinkOperatorRecordCount:          MetricConfig{Enabled: false},
-					FlinkOperatorWatermarkOutput:      MetricConfig{Enabled: false},
-					FlinkTaskRecordCount:              MetricConfig{Enabled: false},
+					FlinkOperatorRecordCount: MetricConfig{
+						Enabled:             false,
+						AggregationStrategy: AggregationStrategySum,
+						EnabledAttributes:   []string{"name", "record"},
+					},
+					FlinkOperatorWatermarkOutput: MetricConfig{
+						Enabled:             false,
+						AggregationStrategy: AggregationStrategySum,
+						EnabledAttributes:   []string{"name"},
+					},
+					FlinkTaskRecordCount: MetricConfig{Enabled: false},
 				},
 				ResourceAttributes: ResourceAttributesConfig{
 					FlinkJobName:       ResourceAttributeConfig{Enabled: false},

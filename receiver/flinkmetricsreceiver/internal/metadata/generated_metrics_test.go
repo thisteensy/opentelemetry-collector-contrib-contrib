@@ -19,6 +19,7 @@ const (
 	testDataSetDefault testDataSet = iota
 	testDataSetAll
 	testDataSetNone
+	testDataSetReag
 )
 
 func TestMetricsBuilder(t *testing.T) {
@@ -35,6 +36,11 @@ func TestMetricsBuilder(t *testing.T) {
 			name:        "all_set",
 			metricsSet:  testDataSetAll,
 			resAttrsSet: testDataSetAll,
+		},
+		{
+			name:        "reaggregate_set",
+			metricsSet:  testDataSetReag,
+			resAttrsSet: testDataSetReag,
 		},
 		{
 			name:        "none_set",
@@ -60,9 +66,41 @@ func TestMetricsBuilder(t *testing.T) {
 			settings := receivertest.NewNopSettings(receivertest.NopType)
 			settings.Logger = zap.New(observedZapCore)
 			mb := NewMetricsBuilder(loadMetricsBuilderConfig(t, tt.name), settings, WithStartTime(start))
+			aggMap := make(map[string]string) // contains the aggregation strategies for each metric name
+			aggMap["FlinkJobCheckpointCount"] = mb.metricFlinkJobCheckpointCount.config.AggregationStrategy
+			aggMap["FlinkJobCheckpointInProgress"] = mb.metricFlinkJobCheckpointInProgress.config.AggregationStrategy
+			aggMap["FlinkJobLastCheckpointSize"] = mb.metricFlinkJobLastCheckpointSize.config.AggregationStrategy
+			aggMap["FlinkJobLastCheckpointTime"] = mb.metricFlinkJobLastCheckpointTime.config.AggregationStrategy
+			aggMap["FlinkJobRestartCount"] = mb.metricFlinkJobRestartCount.config.AggregationStrategy
+			aggMap["FlinkJvmClassLoaderClassesLoaded"] = mb.metricFlinkJvmClassLoaderClassesLoaded.config.AggregationStrategy
+			aggMap["FlinkJvmCPULoad"] = mb.metricFlinkJvmCPULoad.config.AggregationStrategy
+			aggMap["FlinkJvmCPUTime"] = mb.metricFlinkJvmCPUTime.config.AggregationStrategy
+			aggMap["FlinkJvmGcCollectionsCount"] = mb.metricFlinkJvmGcCollectionsCount.config.AggregationStrategy
+			aggMap["FlinkJvmGcCollectionsTime"] = mb.metricFlinkJvmGcCollectionsTime.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryDirectTotalCapacity"] = mb.metricFlinkJvmMemoryDirectTotalCapacity.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryDirectUsed"] = mb.metricFlinkJvmMemoryDirectUsed.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryHeapCommitted"] = mb.metricFlinkJvmMemoryHeapCommitted.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryHeapMax"] = mb.metricFlinkJvmMemoryHeapMax.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryHeapUsed"] = mb.metricFlinkJvmMemoryHeapUsed.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryMappedTotalCapacity"] = mb.metricFlinkJvmMemoryMappedTotalCapacity.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryMappedUsed"] = mb.metricFlinkJvmMemoryMappedUsed.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryMetaspaceCommitted"] = mb.metricFlinkJvmMemoryMetaspaceCommitted.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryMetaspaceMax"] = mb.metricFlinkJvmMemoryMetaspaceMax.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryMetaspaceUsed"] = mb.metricFlinkJvmMemoryMetaspaceUsed.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryNonheapCommitted"] = mb.metricFlinkJvmMemoryNonheapCommitted.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryNonheapMax"] = mb.metricFlinkJvmMemoryNonheapMax.config.AggregationStrategy
+			aggMap["FlinkJvmMemoryNonheapUsed"] = mb.metricFlinkJvmMemoryNonheapUsed.config.AggregationStrategy
+			aggMap["FlinkJvmThreadsCount"] = mb.metricFlinkJvmThreadsCount.config.AggregationStrategy
+			aggMap["FlinkMemoryManagedTotal"] = mb.metricFlinkMemoryManagedTotal.config.AggregationStrategy
+			aggMap["FlinkMemoryManagedUsed"] = mb.metricFlinkMemoryManagedUsed.config.AggregationStrategy
+			aggMap["FlinkOperatorRecordCount"] = mb.metricFlinkOperatorRecordCount.config.AggregationStrategy
+			aggMap["FlinkOperatorWatermarkOutput"] = mb.metricFlinkOperatorWatermarkOutput.config.AggregationStrategy
+			aggMap["FlinkTaskRecordCount"] = mb.metricFlinkTaskRecordCount.config.AggregationStrategy
 
 			expectedWarnings := 0
-			assert.Equal(t, expectedWarnings, observedLogs.Len())
+			if tt.metricsSet != testDataSetReag {
+				assert.Equal(t, expectedWarnings, observedLogs.Len())
+			}
 
 			defaultMetricsCount := 0
 			allMetricsCount := 0
@@ -174,10 +212,16 @@ func TestMetricsBuilder(t *testing.T) {
 			defaultMetricsCount++
 			allMetricsCount++
 			mb.RecordFlinkOperatorRecordCountDataPoint(ts, "1", "operator_name-val", AttributeRecordIn)
+			if tt.name == "reaggregate_set" {
+				mb.RecordFlinkOperatorRecordCountDataPoint(ts, "3", "operator_name-val-2", AttributeRecordIn)
+			}
 
 			defaultMetricsCount++
 			allMetricsCount++
 			mb.RecordFlinkOperatorWatermarkOutputDataPoint(ts, "1", "operator_name-val")
+			if tt.name == "reaggregate_set" {
+				mb.RecordFlinkOperatorWatermarkOutputDataPoint(ts, "3", "operator_name-val-2")
+			}
 
 			defaultMetricsCount++
 			allMetricsCount++
@@ -192,6 +236,10 @@ func TestMetricsBuilder(t *testing.T) {
 			rb.SetHostName("host.name-val")
 			res := rb.Emit()
 			metrics := mb.Emit(WithResource(res))
+			if tt.name == "reaggregate_set" {
+				assert.Empty(t, mb.metricFlinkOperatorRecordCount.aggDataPoints)
+				assert.Empty(t, mb.metricFlinkOperatorWatermarkOutput.aggDataPoints)
+			}
 
 			if tt.expectEmpty {
 				assert.Equal(t, 0, metrics.ResourceMetrics().Len())
@@ -582,42 +630,98 @@ func TestMetricsBuilder(t *testing.T) {
 					assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
 					assert.Equal(t, int64(1), dp.IntValue())
 				case "flink.operator.record.count":
-					assert.False(t, validatedMetrics["flink.operator.record.count"], "Found a duplicate in the metrics slice: flink.operator.record.count")
-					validatedMetrics["flink.operator.record.count"] = true
-					assert.Equal(t, pmetric.MetricTypeSum, ms.At(i).Type())
-					assert.Equal(t, 1, ms.At(i).Sum().DataPoints().Len())
-					assert.Equal(t, "The number of records an operator has.", ms.At(i).Description())
-					assert.Equal(t, "{records}", ms.At(i).Unit())
-					assert.True(t, ms.At(i).Sum().IsMonotonic())
-					assert.Equal(t, pmetric.AggregationTemporalityCumulative, ms.At(i).Sum().AggregationTemporality())
-					dp := ms.At(i).Sum().DataPoints().At(0)
-					assert.Equal(t, start, dp.StartTimestamp())
-					assert.Equal(t, ts, dp.Timestamp())
-					assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
-					assert.Equal(t, int64(1), dp.IntValue())
-					attrVal, ok := dp.Attributes().Get("name")
-					assert.True(t, ok)
-					assert.Equal(t, "operator_name-val", attrVal.Str())
-					attrVal, ok = dp.Attributes().Get("record")
-					assert.True(t, ok)
-					assert.Equal(t, "in", attrVal.Str())
+					if tt.name != "reaggregate_set" {
+						assert.False(t, validatedMetrics["flink.operator.record.count"], "Found a duplicate in the metrics slice: flink.operator.record.count")
+						validatedMetrics["flink.operator.record.count"] = true
+						assert.Equal(t, pmetric.MetricTypeSum, ms.At(i).Type())
+						assert.Equal(t, 1, ms.At(i).Sum().DataPoints().Len())
+						assert.Equal(t, "The number of records an operator has.", ms.At(i).Description())
+						assert.Equal(t, "{records}", ms.At(i).Unit())
+						assert.True(t, ms.At(i).Sum().IsMonotonic())
+						assert.Equal(t, pmetric.AggregationTemporalityCumulative, ms.At(i).Sum().AggregationTemporality())
+						dp := ms.At(i).Sum().DataPoints().At(0)
+						assert.Equal(t, start, dp.StartTimestamp())
+						assert.Equal(t, ts, dp.Timestamp())
+						assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
+						assert.Equal(t, int64(1), dp.IntValue())
+						attrVal, ok := dp.Attributes().Get("name")
+						assert.True(t, ok)
+						assert.Equal(t, "operator_name-val", attrVal.Str())
+						attrVal, ok = dp.Attributes().Get("record")
+						assert.True(t, ok)
+						assert.Equal(t, "in", attrVal.Str())
+					} else {
+						assert.False(t, validatedMetrics["flink.operator.record.count"], "Found a duplicate in the metrics slice: flink.operator.record.count")
+						validatedMetrics["flink.operator.record.count"] = true
+						assert.Equal(t, pmetric.MetricTypeSum, ms.At(i).Type())
+						assert.Equal(t, 1, ms.At(i).Sum().DataPoints().Len())
+						assert.Equal(t, "The number of records an operator has.", ms.At(i).Description())
+						assert.Equal(t, "{records}", ms.At(i).Unit())
+						assert.True(t, ms.At(i).Sum().IsMonotonic())
+						assert.Equal(t, pmetric.AggregationTemporalityCumulative, ms.At(i).Sum().AggregationTemporality())
+						dp := ms.At(i).Sum().DataPoints().At(0)
+						assert.Equal(t, start, dp.StartTimestamp())
+						assert.Equal(t, ts, dp.Timestamp())
+						assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
+						switch aggMap["flink.operator.record.count"] {
+						case "sum":
+							assert.Equal(t, int64(4), dp.IntValue())
+						case "avg":
+							assert.Equal(t, int64(2), dp.IntValue())
+						case "min":
+							assert.Equal(t, int64(1), dp.IntValue())
+						case "max":
+							assert.Equal(t, int64(3), dp.IntValue())
+						}
+						_, ok := dp.Attributes().Get("name")
+						assert.False(t, ok)
+						_, ok = dp.Attributes().Get("record")
+						assert.True(t, ok)
+					}
 				case "flink.operator.watermark.output":
-					assert.False(t, validatedMetrics["flink.operator.watermark.output"], "Found a duplicate in the metrics slice: flink.operator.watermark.output")
-					validatedMetrics["flink.operator.watermark.output"] = true
-					assert.Equal(t, pmetric.MetricTypeSum, ms.At(i).Type())
-					assert.Equal(t, 1, ms.At(i).Sum().DataPoints().Len())
-					assert.Equal(t, "The last watermark this operator has emitted.", ms.At(i).Description())
-					assert.Equal(t, "ms", ms.At(i).Unit())
-					assert.False(t, ms.At(i).Sum().IsMonotonic())
-					assert.Equal(t, pmetric.AggregationTemporalityCumulative, ms.At(i).Sum().AggregationTemporality())
-					dp := ms.At(i).Sum().DataPoints().At(0)
-					assert.Equal(t, start, dp.StartTimestamp())
-					assert.Equal(t, ts, dp.Timestamp())
-					assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
-					assert.Equal(t, int64(1), dp.IntValue())
-					attrVal, ok := dp.Attributes().Get("name")
-					assert.True(t, ok)
-					assert.Equal(t, "operator_name-val", attrVal.Str())
+					if tt.name != "reaggregate_set" {
+						assert.False(t, validatedMetrics["flink.operator.watermark.output"], "Found a duplicate in the metrics slice: flink.operator.watermark.output")
+						validatedMetrics["flink.operator.watermark.output"] = true
+						assert.Equal(t, pmetric.MetricTypeSum, ms.At(i).Type())
+						assert.Equal(t, 1, ms.At(i).Sum().DataPoints().Len())
+						assert.Equal(t, "The last watermark this operator has emitted.", ms.At(i).Description())
+						assert.Equal(t, "ms", ms.At(i).Unit())
+						assert.False(t, ms.At(i).Sum().IsMonotonic())
+						assert.Equal(t, pmetric.AggregationTemporalityCumulative, ms.At(i).Sum().AggregationTemporality())
+						dp := ms.At(i).Sum().DataPoints().At(0)
+						assert.Equal(t, start, dp.StartTimestamp())
+						assert.Equal(t, ts, dp.Timestamp())
+						assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
+						assert.Equal(t, int64(1), dp.IntValue())
+						attrVal, ok := dp.Attributes().Get("name")
+						assert.True(t, ok)
+						assert.Equal(t, "operator_name-val", attrVal.Str())
+					} else {
+						assert.False(t, validatedMetrics["flink.operator.watermark.output"], "Found a duplicate in the metrics slice: flink.operator.watermark.output")
+						validatedMetrics["flink.operator.watermark.output"] = true
+						assert.Equal(t, pmetric.MetricTypeSum, ms.At(i).Type())
+						assert.Equal(t, 1, ms.At(i).Sum().DataPoints().Len())
+						assert.Equal(t, "The last watermark this operator has emitted.", ms.At(i).Description())
+						assert.Equal(t, "ms", ms.At(i).Unit())
+						assert.False(t, ms.At(i).Sum().IsMonotonic())
+						assert.Equal(t, pmetric.AggregationTemporalityCumulative, ms.At(i).Sum().AggregationTemporality())
+						dp := ms.At(i).Sum().DataPoints().At(0)
+						assert.Equal(t, start, dp.StartTimestamp())
+						assert.Equal(t, ts, dp.Timestamp())
+						assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
+						switch aggMap["flink.operator.watermark.output"] {
+						case "sum":
+							assert.Equal(t, int64(4), dp.IntValue())
+						case "avg":
+							assert.Equal(t, int64(2), dp.IntValue())
+						case "min":
+							assert.Equal(t, int64(1), dp.IntValue())
+						case "max":
+							assert.Equal(t, int64(3), dp.IntValue())
+						}
+						_, ok := dp.Attributes().Get("name")
+						assert.False(t, ok)
+					}
 				case "flink.task.record.count":
 					assert.False(t, validatedMetrics["flink.task.record.count"], "Found a duplicate in the metrics slice: flink.task.record.count")
 					validatedMetrics["flink.task.record.count"] = true
